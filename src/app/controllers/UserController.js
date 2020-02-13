@@ -12,7 +12,7 @@ class UserController {
         });
 
         if (!(await schema.isValid(req.body))) {
-            return res.status(400).json({ error: 'validation fails' });
+            return res.status(400).json({ error: 'Validation fails!' });
         }
 
         const exist = await User.findOne({ where: { email: req.body.email } });
@@ -56,7 +56,9 @@ class UserController {
         if (oldPassword && !(await User.checkPass(oldPassword)))
             return res.status(401).json({ error: 'Passoword does not match' });
 
-        const { id, name, provider } = await User.update(req.body);
+        const { id, name, provider } = await User.update(req.body, {
+            where: { id: req.userId },
+        });
         return res.json({ id, name, email, provider });
     }
 
