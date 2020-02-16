@@ -32,13 +32,7 @@ class CourierController {
 
     async index(req, res) {
         const courier = await Courier.findAll({
-            include: [
-                {
-                    model: File,
-                    as: 'avatar',
-                    attributes: ['name', 'path', 'url'],
-                },
-            ],
+            include: [{ all: true }],
         });
         return res.json(courier);
     }
@@ -85,13 +79,13 @@ class CourierController {
             }
         }
 
-        const courier = Courier.update(req.body, { where: { id } });
+        const courier = await Courier.update(req.body, { where: { id } });
         return res.json(courier);
     }
 
     async delete(req, res) {
         const { id } = req.body;
-        const deleted = Courier.destroy({ where: { id } });
+        const deleted = await Courier.destroy({ where: { id } });
         return res.json(deleted);
     }
 }
