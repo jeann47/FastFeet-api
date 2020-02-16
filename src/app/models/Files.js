@@ -5,6 +5,7 @@ class File extends Model {
     static init(sequelize) {
         super.init(
             {
+                avatar_id: Sequelize.VIRTUAL,
                 name: Sequelize.STRING,
                 path: Sequelize.STRING,
                 url: {
@@ -17,6 +18,10 @@ class File extends Model {
             { sequelize }
         );
         return this;
+    }
+
+    static associate(models) {
+        this.hasOne(models.Courier, { as: 'avatar' });
     }
 }
 
