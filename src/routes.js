@@ -8,9 +8,14 @@ import SessionController from './app/controllers/SessionController';
 import RecipientController from './app/controllers/RecipientController';
 import FileController from './app/controllers/FileController';
 import CourierController from './app/controllers/CourierController';
+import PackageController from './app/controllers/PackageController';
 
 const routes = new Router();
 const upload = multer(multerConfig);
+
+// routes.post('/pkg', PackageController.store);
+routes.get('/pkg', PackageController.index);
+// routes.put('/pkg', PackageController.update);
 
 routes.post('/file', upload.single('file'), FileController.store);
 routes.post('/courier', CourierController.store);
