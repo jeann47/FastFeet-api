@@ -9,7 +9,14 @@ import Courier from '../app/models/Courier';
 import Package from '../app/models/Package';
 import DeliveryProblems from '../app/models/Problems';
 
-const models = [User, Recipient, File, Courier, Package, DeliveryProblems];
+export const models = [
+    User,
+    Recipient,
+    File,
+    Courier,
+    Package,
+    DeliveryProblems,
+];
 
 class Database {
     constructor() {

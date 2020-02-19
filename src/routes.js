@@ -1,36 +1,70 @@
 import { Router } from 'express';
 import multer from 'multer';
 import multerConfig from './config/multer';
-// import authToken from './app/middlewares/auth';
+import authToken from './app/middlewares/auth';
 
-import UserController from './app/controllers/UserController';
-import SessionController from './app/controllers/SessionController';
-import RecipientController from './app/controllers/RecipientController';
-import FileController from './app/controllers/FileController';
-import CourierController from './app/controllers/CourierController';
-import PackageController from './app/controllers/PackageController';
-import AdmProblemsController from './app/controllers/AdmProblemsController';
-import ProblemsController from './app/controllers/ProblemsController';
+import Controller from './app/controllers';
 
 const routes = new Router();
 const upload = multer(multerConfig);
 
-// routes.post('/pkg', PackageController.store);
-routes.get('/pkg/:courier_id', PackageController.index);
-routes.get('/prob', AdmProblemsController.list);
-routes.post('/prob', ProblemsController.store);
-// routes.delete('/prob', ProblemsController.delete);
-// routes.put('/pkg', PackageController.update);
+// login
 
-routes.post('/file', upload.single('file'), FileController.store);
-routes.post('/courier', CourierController.store);
-routes.get('/couriers', CourierController.index);
-routes.put('/couriersu', CourierController.update);
-routes.delete('/couriersd', CourierController.delete);
+routes.post('/login', Controller.SessionController.store);
 
-routes.post('/users', UserController.store);
-routes.post('/login', SessionController.store);
-routes.get('/rec', RecipientController.index);
-routes.post('/recu', RecipientController.store);
+// Admin user
+routes.post('/singup', Controller.UserController.store);
+
+// problems
+routes.post(
+    '/delivery/:package_id/problems',
+    Controller.ProblemsController.store
+);
+routes.get(
+    '/courier/:courier_id/packages/problems',
+    Controller.ProblemsController.list
+);
+routes.get(
+    '/package/:package_id/problems',
+    Controller.ProblemsController.index
+);
+
+// packages
+routes.get('/packages', Controller.PackageController.index);
+routes.put('/package/update', Controller.PackageController.update);
+
+// ADMINS ONLY
+routes.use(authToken);
+
+routes.put('/user/update', Controller.UserController.update);
+routes.delete('/user/delete', Controller.UserController.delete);
+
+// recipient
+routes.post('/recipient', Controller.RecipientController.store);
+routes.get('/recipient', Controller.RecipientController.index);
+routes.put('/recipient', Controller.RecipientController.update);
+
+// problems
+routes.get('packages', Controller.AdmProblemsController.index);
+routes.delete(
+    'problem/:id/cancel-delivery',
+    Controller.AdmProblemsController.delete
+);
+
+// packages
+
+routes.post('package/add', Controller.AdmPackageController.store);
+routes.get('/packages/all', Controller.AdmPackageController.index);
+routes.put('package/:id/update', Controller.AdmPackageController.update);
+routes.delete('package/:id/delete', Controller.AdmPackageController.delete);
+
+// files
+routes.post('/file', upload.single('file'), Controller.FileController.store);
+
+// courier
+routes.post('/courier/add', Controller.CourierController.store);
+routes.get('/couriers', Controller.CourierController.index);
+routes.put('/courier/:id/update', Controller.CourierController.update);
+routes.delete('/courier/:id/delete', Controller.CourierController.delete);
 
 export default routes;
