@@ -1,8 +1,17 @@
-import { setHours, setMinutes, setSeconds, isAfter, isBefore } from 'date-fns';
+import {
+    setHours,
+    setMinutes,
+    setSeconds,
+    isAfter,
+    isBefore,
+    parseISO,
+} from 'date-fns';
+import { Op } from 'sequelize';
+import Package from '../models/Package';
 
 export default {
     Package: {
-        startable(pkg) {
+        async startable(pkg, start_date) {
             const serviceInit = setSeconds(
                 setMinutes(setHours(new Date().getTime(), 8), 0),
                 0
@@ -12,14 +21,30 @@ export default {
                 0
             );
 
+            const deliveries = await Package.findAndCountAll({
+                where: {
+                    courier_id: pkg.courier_id,
+                    start_date: { [Op.between]: [serviceInit, serviceEnd] },
+                },
+            });
+
+            if (deliveries.count >= 5) {
+                return {
+                    status: 401,
+                    res: {
+                        error: 'Is not allowed to start more then 5 deliveries',
+                    },
+                };
+            }
+
             if (
                 !(
-                    isAfter(new Date(), serviceInit) &&
-                    isBefore(new Date(), serviceEnd)
+                    isAfter(parseISO(start_date), serviceInit) &&
+                    isBefore(parseISO(start_date), serviceEnd)
                 )
             ) {
                 return {
-                    status: 401,
+                    status: 403,
                     res: {
                         error:
                             'Deliveries can only start between 8:00 and 18:00',
@@ -36,7 +61,7 @@ export default {
             }
             if (pkg.canceled_at) {
                 return {
-                    status: 401,
+                    status: 403,
                     res: {
                         error: 'Is not allowed to start a canceled delivery',
                     },
@@ -45,7 +70,7 @@ export default {
             if (!pkg.recipient_id) {
                 // in case of a deleted recipient
                 return {
-                    status: 401,
+                    status: 403,
                     res: {
                         error: 'This package do not have a recipient',
                     },
@@ -54,7 +79,7 @@ export default {
             if (!pkg.courier_id) {
                 // in case of a deleted courier
                 return {
-                    status: 401,
+                    status: 403,
                     res: {
                         error: 'This package do not have a courier',
                     },
@@ -74,7 +99,7 @@ export default {
 
             if (pkg.canceled_at) {
                 return {
-                    status: 401,
+                    status: 400,
                     res: {
                         error: 'This delivery was canceled',
                     },
@@ -83,7 +108,7 @@ export default {
 
             if (!pkg.start_date) {
                 return {
-                    status: 401,
+                    status: 403,
                     res: {
                         error:
                             'Is not allowed to end a delivery that was never started',
@@ -95,7 +120,7 @@ export default {
         cancelable(pkg) {
             if (!pkg.canceled_at) {
                 return {
-                    status: 401,
+                    status: 400,
                     res: {
                         error: 'This delivery is already canceled',
                     },
@@ -103,7 +128,7 @@ export default {
             }
             if (pkg.end_date) {
                 return {
-                    status: 401,
+                    status: 400,
                     res: {
                         error: 'This delivery was already finished',
                     },
