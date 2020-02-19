@@ -29,8 +29,8 @@ class RecipientController {
     }
 
     async index(req, res) {
-        const { name, address } = await Recipient.findAll();
-        return res.json({ name, address });
+        const recipient = await Recipient.findAll();
+        return res.json(recipient);
     }
 
     async update(req, res) {

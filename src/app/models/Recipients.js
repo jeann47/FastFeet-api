@@ -5,13 +5,6 @@ class Recipient extends Model {
         super.init(
             {
                 name: Sequelize.STRING,
-                street: Sequelize.STRING,
-                number: Sequelize.INTEGER,
-                complement: Sequelize.STRING,
-                state: Sequelize.STRING,
-                city: Sequelize.STRING,
-                zipcode: Sequelize.STRING,
-                type: Sequelize.STRING,
                 address: {
                     type: Sequelize.VIRTUAL,
                     get() {
@@ -29,6 +22,13 @@ class Recipient extends Model {
                         throw new Error('Do not try to set the adress value!');
                     },
                 },
+                street: Sequelize.STRING,
+                number: Sequelize.INTEGER,
+                complement: Sequelize.STRING,
+                state: Sequelize.STRING,
+                city: Sequelize.STRING,
+                zipcode: Sequelize.STRING,
+                type: Sequelize.STRING,
             },
             { sequelize }
         );

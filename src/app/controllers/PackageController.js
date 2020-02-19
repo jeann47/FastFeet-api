@@ -1,5 +1,7 @@
 import * as Yup from 'yup';
 import Package from '../models/Package';
+import Recipient from '../models/Recipients';
+import Problems from '../models/Problems';
 import verifications from '../util/verifications';
 
 const verify = verifications.Package;
@@ -13,12 +15,25 @@ class PackageController {
             end_date: Yup.date(),
         });
 
-        if (!(await schema.isValid(req.query))) {
+        if (!(await schema.isValid(req.params))) {
             return res.status(400).json({ error: 'Validation fails!' });
         }
 
-        const packages = await Package.findAll({ where: req.query });
-        return res.json(packages);
+        const pkg = await Package.findAll({
+            where: req.params,
+            include: [
+                { model: Recipient, as: 'recipient', required: true },
+                { model: Problems, as: 'problems' },
+            ],
+            attributes: [
+                'id',
+                'product',
+                'canceled_at',
+                'start_date',
+                'end_date',
+            ],
+        });
+        return res.json(pkg);
     }
 
     async update(req, res) {
