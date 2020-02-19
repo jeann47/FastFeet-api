@@ -18,7 +18,7 @@ class AdmProblemsController {
     }
 
     async delete(req, res) {
-        const problem = await Problems.findByPk(req.body.id);
+        const problem = await Problems.findByPk(req.params.id);
 
         const pkg = await Package.findByPk(problem.package_id);
 

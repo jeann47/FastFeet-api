@@ -84,7 +84,7 @@ class CourierController {
     }
 
     async delete(req, res) {
-        const { id } = req.body;
+        const { id } = req.params;
         const deleted = await Courier.destroy({ where: { id } });
         return res.json(deleted);
     }

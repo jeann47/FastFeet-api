@@ -69,7 +69,7 @@ class AdmPackageController {
     }
 
     async delete(req, res) {
-        const pkg = await Package.destroy({ where: { id: req.body.id } });
+        const pkg = await Package.destroy({ where: { id: req.params.id } });
         return res.json(pkg);
     }
 }

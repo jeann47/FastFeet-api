@@ -24,7 +24,7 @@ class ProblemsController {
     }
 
     async list(req, res) {
-        const prob = await Problems.findAll({ where: { id: req.query.id } });
+        const prob = await Problems.findAll({ where: { id: req.params.id } });
         return res.json(prob);
     }
 }
