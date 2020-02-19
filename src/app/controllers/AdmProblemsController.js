@@ -10,13 +10,6 @@ class AdmProblemsController {
         return res.json(prob);
     }
 
-    async list(req, res) {
-        const prob = await Package.findAll({
-            include: [{ model: Problems, as: 'problems', required: true }],
-        });
-        return res.json(prob);
-    }
-
     async delete(req, res) {
         const problem = await Problems.findByPk(req.params.id);
 

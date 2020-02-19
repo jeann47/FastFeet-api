@@ -36,7 +36,6 @@ class AdmPackageController {
 
     async update(req, res) {
         const schema = Yup.object().shape({
-            id: Yup.number().required(),
             recipient_id: Yup.number(),
             courier_id: Yup.number(),
             product: Yup.string(),
@@ -47,11 +46,13 @@ class AdmPackageController {
             return res.status(400).json({ error: 'Validation fails!' });
         }
 
-        let pkg = await Package.findByPk(req.body.id);
+        const { id } = req.params;
+
+        let pkg = await Package.findByPk(id);
 
         if (!pkg) {
             return res.status(404).json({
-                error: `Could not find a package with id ${req.body.id}`,
+                error: `Could not find a package with id ${id}`,
             });
         }
 
@@ -63,7 +64,7 @@ class AdmPackageController {
             }
         }
 
-        pkg = await Package.update(req.body, { where: { id: req.body.id } });
+        pkg = await Package.update(req.body, { where: { id } });
 
         return res.json(pkg);
     }

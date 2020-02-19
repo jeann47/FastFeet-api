@@ -15,7 +15,7 @@ class PackageController {
             end_date: Yup.date(),
         });
 
-        if (!(await schema.isValid(req.params))) {
+        if (!(await schema.isValid(req.query))) {
             return res.status(400).json({ error: 'Validation fails!' });
         }
 
@@ -93,7 +93,7 @@ class PackageController {
         }
 
         if (start_date) {
-            canGo = await verify.startable(pkg);
+            canGo = await verify.startable(pkg, start_date);
 
             if (canGo.status !== 200) {
                 return res.status(canGo.status).json(canGo.res);

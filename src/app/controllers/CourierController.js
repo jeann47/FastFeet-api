@@ -39,7 +39,6 @@ class CourierController {
 
     async update(req, res) {
         const schema = Yup.object().shape({
-            id: Yup.number().required(),
             name: Yup.string(),
             email: Yup.string().email(),
             avatar_id: Yup.number(),
@@ -49,7 +48,8 @@ class CourierController {
             return res.status(400).json({ error: 'Validation fails!' });
         }
 
-        const { id, email, avatar_id } = req.body;
+        const { email, avatar_id } = req.body;
+        const { id } = req.params;
 
         if (email) {
             const exist = await Courier.findOne({

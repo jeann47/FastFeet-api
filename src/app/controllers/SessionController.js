@@ -20,7 +20,7 @@ class SessionController {
         return res.json({
             user: { id, name, email },
             token: jwt.sign({ id }, authCfg.secret, {
-                expiresIn: authCfg.expiresIn,
+                expiresIn: '7d',
             }),
         });
     }
